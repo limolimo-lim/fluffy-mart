@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import defaultProducts from "../data/products";
 import ProductCard from "../components/ProductCard";
 
-function Products({ addToCart, viewProduct }) {
+function Products({ addToCart, viewProduct, selectedCategory, setSelectedCategory }) {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
 
   const productsPerPage = 12;
@@ -14,8 +13,22 @@ function Products({ addToCart, viewProduct }) {
     const savedProducts =
       JSON.parse(localStorage.getItem("fluffy_products")) || defaultProducts;
 
-    setProducts(savedProducts);
+    const updatedProducts = savedProducts.map(product => {
+      if (product.name && product.name.toLowerCase() === "croissant") {
+        return {
+          ...product,
+          image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a"
+        };
+      }
+      return product;
+    });
+
+    setProducts(updatedProducts);
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory]);
 
   const categories = [
     "All",
@@ -27,8 +40,9 @@ function Products({ addToCart, viewProduct }) {
       .toLowerCase()
       .includes(search.toLowerCase());
 
+    const currentFilter = selectedCategory || "All";
     const matchCategory =
-      category === "All" || product.category === category;
+      currentFilter === "All" || product.category === currentFilter;
 
     return matchSearch && matchCategory;
   });
@@ -52,7 +66,9 @@ function Products({ addToCart, viewProduct }) {
   };
 
   const handleCategory = (e) => {
-    setCategory(e.target.value);
+    if (setSelectedCategory) {
+      setSelectedCategory(e.target.value);
+    }
     setCurrentPage(1);
   };
 
@@ -74,7 +90,7 @@ function Products({ addToCart, viewProduct }) {
         <div className="col-md-4 mb-2">
           <select
             className="form-select"
-            value={category}
+            value={selectedCategory || "All"}
             onChange={handleCategory}
           >
             {categories.map((cat) => (

@@ -3,7 +3,7 @@ import defaultProducts from "../data/products";
 import ProductCard from "../components/ProductCard";
 import CategoryCard from "../components/CategoryCard";
 
-function Home({ addToCart, setPage, viewProduct }) {
+function Home({ addToCart, setPage, viewProduct, setSelectedCategory }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -15,6 +15,13 @@ function Home({ addToCart, setPage, viewProduct }) {
   }, []);
 
   const popularProducts = products.slice(0, 4);
+
+  const handleCategorySelect = (categoryName) => {
+    if (setSelectedCategory) {
+      setSelectedCategory(categoryName);
+    }
+    setPage("products");
+  };
 
   return (
     <div>
@@ -40,14 +47,20 @@ function Home({ addToCart, setPage, viewProduct }) {
                 <div className="d-flex gap-3 mt-4">
                   <button
                     className="btn btn-warning btn-lg px-5 fw-bold"
-                    onClick={() => setPage("products")}
+                    onClick={() => {
+                      if (setSelectedCategory) setSelectedCategory("All");
+                      setPage("products");
+                    }}
                   >
                     Shop Fresh →
                   </button>
 
                   <button
                     className="btn btn-outline-light btn-lg px-4"
-                    onClick={() => setPage("products")}
+                    onClick={() => {
+                      if (setSelectedCategory) setSelectedCategory("All");
+                      setPage("products");
+                    }}
                   >
                     Explore Products
                   </button>
@@ -81,19 +94,19 @@ function Home({ addToCart, setPage, viewProduct }) {
         <h3 className="mb-4">Shop By Category</h3>
 
         <div className="row">
-          <div className="col-md-3 col-6 mb-3">
+          <div className="col-md-3 col-6 mb-3" onClick={() => handleCategorySelect("Fruits")}>
             <CategoryCard title="Fruits" icon="🍎" />
           </div>
 
-          <div className="col-md-3 col-6 mb-3">
+          <div className="col-md-3 col-6 mb-3" onClick={() => handleCategorySelect("Dairy")}>
             <CategoryCard title="Dairy" icon="🥛" />
           </div>
 
-          <div className="col-md-3 col-6 mb-3">
+          <div className="col-md-3 col-6 mb-3" onClick={() => handleCategorySelect("Beverages")}>
             <CategoryCard title="Beverages" icon="🥤" />
           </div>
 
-          <div className="col-md-3 col-6 mb-3">
+          <div className="col-md-3 col-6 mb-3" onClick={() => handleCategorySelect("Snacks")}>
             <CategoryCard title="Snacks" icon="🍟" />
           </div>
         </div>
@@ -105,7 +118,10 @@ function Home({ addToCart, setPage, viewProduct }) {
 
           <button
             className="btn btn-outline-success"
-            onClick={() => setPage("products")}
+            onClick={() => {
+              if (setSelectedCategory) setSelectedCategory("All");
+              setPage("products");
+            }}
           >
             View All
           </button>
