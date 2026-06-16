@@ -71,6 +71,10 @@ function App() {
 
   const viewProduct = (product) => {
     setSelectedProduct(product);
+    
+    if (location.pathname === "/productDetail") {
+      return;
+    }
     navigate("/productDetail");
   };
 
@@ -98,11 +102,13 @@ function App() {
   };
 
   const handlePageChange = (targetPage) => {
-    if (targetPage === "home") {
-      navigate("/");
-    } else {
-      navigate(`/${targetPage}`);
+    const targetPath = targetPage === "home" ? "/" : `/${targetPage}`;
+    
+    if (location.pathname === targetPath) {
+      return; 
     }
+
+    navigate(targetPath);
   };
 
   const handleNavbarNavigate = (targetPage) => {
