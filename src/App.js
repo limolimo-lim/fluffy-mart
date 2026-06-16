@@ -101,11 +101,15 @@ function App() {
     if (targetPage === "home") {
       navigate("/");
     } else {
-      if (targetPage === "products") {
-        setSelectedCategory("All");
-      }
       navigate(`/${targetPage}`);
     }
+  };
+
+  const handleNavbarNavigate = (targetPage) => {
+    if (targetPage === "products") {
+      setSelectedCategory("All");
+    }
+    handlePageChange(targetPage);
   };
 
   return (
@@ -113,7 +117,7 @@ function App() {
       <Navbar
         cartCount={cartCount}
         page={getCurrentPageName()}
-        setPage={handlePageChange}
+        setPage={handleNavbarNavigate}
         user={user}
         logout={logout}
       />
