@@ -13,6 +13,7 @@ import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
   const navigate = useNavigate();
@@ -98,6 +99,7 @@ function App() {
     if (location.pathname === "/orders") return "orders";
     if (location.pathname === "/dashboard") return "dashboard";
     if (location.pathname === "/login") return "login";
+    if (location.pathname === "/register") return "register";
     return "home";
   };
 
@@ -158,6 +160,15 @@ function App() {
           element={
             <Login 
               setUser={setUser} 
+              setPage={handlePageChange} 
+            />
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <Register 
               setPage={handlePageChange} 
             />
           }

@@ -49,7 +49,7 @@ function Dashboard() {
     setNewProduct({
       name: "",
       price: "",
-      category: "",
+      category: newProduct.category,
       image: "",
     });
   };
@@ -61,22 +61,24 @@ function Dashboard() {
       saveProducts(products.filter((product) => product.id !== id));
     }
   };
+
   const resetData = () => {
-  const confirmReset = window.confirm(
-    "Reset all products, cart, and orders?"
-  );
+    const confirmReset = window.confirm(
+      "Reset all products, cart, and orders?"
+    );
 
-  if (confirmReset) {
-    localStorage.removeItem("fluffy_products");
-    localStorage.removeItem("fluffy_cart");
-    localStorage.removeItem("fluffy_orders");
+    if (confirmReset) {
+      localStorage.removeItem("fluffy_products");
+      localStorage.removeItem("fluffy_cart");
+      localStorage.removeItem("fluffy_orders");
 
-    setProducts(defaultProducts);
-    setOrders([]);
+      setProducts(defaultProducts);
+      setOrders([]);
 
-    alert("Data reset successfully!");
-  }
-};
+      alert("Data reset successfully!");
+    }
+  };
+
   const startEdit = (product) => {
     setEditProduct({ ...product });
   };
@@ -108,18 +110,22 @@ function Dashboard() {
     orders.map((order) => order.phone)
   ).size;
 
+  const uniqueCategories = [
+    ...new Set(products.map((product) => product.category)),
+  ].filter(category => category && category.trim() !== "");
+
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center">
-  <h2>Admin Dashboard</h2>
+        <h2>Admin Dashboard</h2>
 
-  <button
-    className="btn btn-outline-danger"
-    onClick={resetData}
-  >
-    Reset Data
-  </button>
-</div>
+        <button
+          className="btn btn-outline-danger"
+          onClick={resetData}
+        >
+          Reset Data
+        </button>
+      </div>
 
       <div className="row mt-4">
         <div className="col-md-3 mb-3">
@@ -190,15 +196,21 @@ function Dashboard() {
           </div>
 
           <div className="col-md-3 mb-2">
-            <input
-              className="form-control"
-              placeholder="Category"
+            <select
+              className="form-select"
               value={newProduct.category}
               onChange={(e) =>
                 setNewProduct({ ...newProduct, category: e.target.value })
               }
               required
-            />
+            >
+              <option value="" disabled>Select Category</option>
+              {uniqueCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="col-md-3 mb-2">
@@ -255,8 +267,8 @@ function Dashboard() {
               </div>
 
               <div className="col-md-3 mb-2">
-                <input
-                  className="form-control"
+                <select
+                  className="form-select"
                   value={editProduct.category}
                   onChange={(e) =>
                     setEditProduct({
@@ -265,7 +277,13 @@ function Dashboard() {
                     })
                   }
                   required
-                />
+                >
+                  {uniqueCategories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="col-md-3 mb-2">

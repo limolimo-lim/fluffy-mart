@@ -32,7 +32,7 @@ function Products({ addToCart, viewProduct, selectedCategory, setSelectedCategor
 
   const categories = [
     "All",
-    ...new Set(products.map((product) => product.category)),
+    ...new Set(products.map((product) => product.category).filter(cat => cat && cat.trim() !== "")),
   ];
 
   const filteredProducts = products.filter((product) => {
@@ -42,7 +42,8 @@ function Products({ addToCart, viewProduct, selectedCategory, setSelectedCategor
 
     const currentFilter = selectedCategory || "All";
     const matchCategory =
-      currentFilter === "All" || product.category === currentFilter;
+      currentFilter === "All" || 
+      (product.category && product.category.trim() === currentFilter.trim());
 
     return matchSearch && matchCategory;
   });
