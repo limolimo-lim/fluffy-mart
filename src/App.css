@@ -4,21 +4,54 @@
   --accent: #95d5b2;
   --cream: #f8f6f0;
   --dark: #163020;
+  
+  --bg-color: #f8f6f0;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+  --card-text: #212529;
+  --muted-text: #6c757d;
+  --input-bg: #ffffff;
+  --input-text: #212529;
+  --input-border: #dee2e6;
+  --list-bg: #ffffff;
+  --list-text: #212529;
+  --list-border: rgba(0, 0, 0, 0.125);
 }
+
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --text-color: #f8f9fa;
+  --card-bg: #1e1e1e;
+  --card-text: #f8f9fa;
+  --muted-text: #a0a0a0;
+  --input-bg: #2b2b2b;
+  --input-text: #ffffff;
+  --input-border: #444444;
+  --list-bg: #1e1e1e;
+  --list-text: #ffffff;
+  --list-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 .navbar {
   background: #1f4d36 !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, .15);
 }
+
 .nav-btn {
   background: transparent;
   color: white;
   border: 1px solid rgba(255, 255, 255, .3);
-
   padding: 10px 20px;
   border-radius: 50px;
-
   font-weight: 500;
-
   transition: 0.3s;
 }
 
@@ -30,14 +63,10 @@
 .login-btn {
   background: #f4c430;
   color: #163020;
-
   border: none;
   border-radius: 50px;
-
   padding: 10px 24px;
-
   font-weight: 700;
-
   transition: 0.3s;
 }
 
@@ -48,22 +77,14 @@
 .logout-btn {
   background: #dc3545;
   color: white;
-
   border: none;
   border-radius: 50px;
-
   padding: 10px 24px;
-
   font-weight: 700;
 }
 
 .logout-btn:hover {
   background: #bb2d3b;
-}
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: var(--cream);
 }
 
 .hero-section {
@@ -75,7 +96,6 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
   display: flex;
   align-items: center;
   color: white;
@@ -102,10 +122,11 @@ body {
 }
 
 .category-card {
-  background: white;
+  background: var(--card-bg);
+  color: var(--text-color);
   border-radius: 20px;
   padding: 30px 10px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--list-border);
   transition: 0.3s;
 }
 
@@ -119,7 +140,7 @@ body {
 }
 
 .product-card {
-  background: #ffffff;
+  background: var(--card-bg);
   border-radius: 22px;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(31, 77, 54, 0.08);
@@ -164,7 +185,11 @@ body {
 .product-name {
   margin-top: 14px;
   font-weight: 700;
-  color: #163020;
+  color: var(--dark);
+}
+
+[data-theme="dark"] .product-name {
+  color: var(--text-color);
 }
 
 .product-price {
@@ -190,8 +215,10 @@ body {
 }
 
 .table {
-  background: white;
+  background: var(--card-bg);
+  color: var(--text-color);
 }
+
 .pagination {
   gap: 8px;
 }
@@ -200,7 +227,7 @@ body {
   border: none;
   border-radius: 12px;
   color: #1f4d36;
-  background: white;
+  background: var(--card-bg);
   font-weight: 600;
   padding: 10px 16px;
   box-shadow: 0 6px 16px rgba(31, 77, 54, 0.08);
@@ -225,4 +252,38 @@ body {
 
 footer {
   background-color: var(--primary) !important;
+}
+
+.card {
+  background-color: var(--card-bg) !important;
+  color: var(--card-text) !important;
+  border-color: var(--list-border) !important;
+}
+
+.text-muted, 
+.card-text.text-muted {
+  color: var(--muted-text) !important;
+}
+
+.form-control {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border) !important;
+}
+
+.form-control:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+}
+
+.list-group-item {
+  background-color: var(--list-bg) !important;
+  color: var(--list-text) !important;
+  border-color: var(--list-border) !important;
+}
+
+.list-group-item[style*="background-color: rgb(31, 77, 54)"],
+.list-group-item[style*="background-color: #1f4d36"] {
+  background-color: #1f4d36 !important;
+  color: #ffffff !important;
 }

@@ -14,27 +14,48 @@ import Orders from "./pages/Orders";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Settings from "./pages/Settings";
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("fluffy_user");
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem("fluffy_user");
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+      console.error("Error loading user session:", error);
+      return null;
+    }
   });
   
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
+  const [redirectAfterLogin, setRedirectAfterLogin] = useState(false);
+
   const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem("fluffy_cart");
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      const savedCart = localStorage.getItem("fluffy_cart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      return [];
+    }
   });
 
   useEffect(() => {
     localStorage.setItem("fluffy_cart", JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("fluffy_theme");
+    if (savedTheme === "dark") {
+      document.body.setAttribute("data-theme", "dark");
+    } else {
+      document.body.removeAttribute("data-theme");
+    }
+  }, []);
 
   const addToCart = (product) => {
     const existProduct = cart.find((item) => item.id === product.id);
@@ -72,7 +93,6 @@ function App() {
 
   const viewProduct = (product) => {
     setSelectedProduct(product);
-    
     if (location.pathname === "/productDetail") {
       return;
     }
@@ -84,10 +104,30 @@ function App() {
     0
   );
 
+  // --- FIXED LOGOUT METHOD ---
   const logout = () => {
+    const activeSessions = JSON.parse(localStorage.getItem("fluffy_active_sessions")) || [];
+    
+    // Safely parse username whether user is wrapped in an array or direct object
+    const activeUserObj = user && Array.isArray(user) ? user : user;
+    const currentUsername = activeUserObj?.username || "";
+
+    const updatedSessions = activeSessions.filter((s) => s.username !== currentUsername);
+    localStorage.setItem("fluffy_active_sessions", JSON.stringify(updatedSessions));
+
     localStorage.removeItem("fluffy_user");
     setUser(null);
-    navigate("/");
+
+    if (updatedSessions.length > 0) {
+      // FIX: Store the single first object profile element, NOT the whole raw session array state
+      localStorage.setItem("fluffy_user", JSON.stringify(updatedSessions));
+      setUser(updatedSessions);
+      alert(`Logged out. Switched to next active switcher account profile: @${updatedSessions.username}`);
+      navigate("/");
+    } else {
+      alert("Logged out successfully.");
+      navigate("/");
+    }
   };
 
   const getCurrentPageName = () => {
@@ -100,16 +140,15 @@ function App() {
     if (location.pathname === "/dashboard") return "dashboard";
     if (location.pathname === "/login") return "login";
     if (location.pathname === "/register") return "register";
+    if (location.pathname === "/settings") return "settings";
     return "home";
   };
 
   const handlePageChange = (targetPage) => {
     const targetPath = targetPage === "home" ? "/" : `/${targetPage}`;
-    
     if (location.pathname === targetPath) {
       return; 
     }
-
     navigate(targetPath);
   };
 
@@ -120,9 +159,21 @@ function App() {
     handlePageChange(targetPage);
   };
 
+  const handleCheckoutGate = () => {
+    if (!user) {
+      alert("Please log in or register an account to complete your checkout!");
+      setRedirectAfterLogin(true);
+      handlePageChange("login");
+    } else {
+      handlePageChange("checkout");
+    }
+  };
+
   return (
     <>
       <Navbar
+        cart={cart}
+        setCart={setCart}
         cartCount={cartCount}
         page={getCurrentPageName()}
         setPage={handleNavbarNavigate}
@@ -161,6 +212,8 @@ function App() {
             <Login 
               setUser={setUser} 
               setPage={handlePageChange} 
+              redirectAfterLogin={redirectAfterLogin}
+              setRedirectAfterLogin={setRedirectAfterLogin}
             />
           }
         />
@@ -192,7 +245,7 @@ function App() {
               cart={cart}
               updateQuantity={updateQuantity}
               removeFromCart={removeFromCart}
-              setPage={handlePageChange}
+              onCheckoutClick={handleCheckoutGate}
             />
           }
         />
@@ -204,6 +257,7 @@ function App() {
               cart={cart}
               setCart={setCart}
               setPage={handlePageChange}
+              user={user}
             />
           }
         />
@@ -211,6 +265,18 @@ function App() {
         <Route path="/orders" element={<Orders />} />
 
         <Route path="/dashboard" element={<Dashboard />} />
+
+        <Route
+          path="/settings"
+          element={
+            <Settings
+              user={user}
+              setUser={setUser}
+              setPage={handlePageChange}
+              setRedirectAfterLogin={setRedirectAfterLogin}
+            />
+          }
+        />
       </Routes>
 
       <Footer />

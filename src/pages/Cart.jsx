@@ -1,4 +1,4 @@
-function Cart({ cart, updateQuantity, removeFromCart, setPage }) {
+function Cart({ cart, updateQuantity, removeFromCart, onCheckoutClick }) {
   const total = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -68,7 +68,7 @@ function Cart({ cart, updateQuantity, removeFromCart, setPage }) {
           <div className="text-end">
             <button
               className="btn btn-success"
-              onClick={() => setPage("checkout")}
+              onClick={onCheckoutClick}
             >
               Checkout
             </button>

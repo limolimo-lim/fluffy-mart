@@ -1,4 +1,6 @@
-function Login({ setUser, setPage }) {
+import React from "react";
+
+function Login({ setUser, setPage, redirectAfterLogin, setRedirectAfterLogin }) {
   const login = (e) => {
     e.preventDefault();
 
@@ -15,17 +17,54 @@ function Login({ setUser, setPage }) {
       const userData = { username: "admin", role: "admin" };
       localStorage.setItem("fluffy_user", JSON.stringify(userData));
       setUser(userData);
+      
+      const activeSessions = JSON.parse(localStorage.getItem("fluffy_active_sessions")) || [];
+      if (!activeSessions.some(s => s.username === userData.username)) {
+        activeSessions.push(userData);
+        localStorage.setItem("fluffy_active_sessions", JSON.stringify(activeSessions));
+      }
+      
       setPage("dashboard");
     } else if (username === "customer" && password === "123") {
       const userData = { username: "customer", role: "customer" };
       localStorage.setItem("fluffy_user", JSON.stringify(userData));
       setUser(userData);
-      setPage("home");
+      
+      const activeSessions = JSON.parse(localStorage.getItem("fluffy_active_sessions")) || [];
+      if (!activeSessions.some(s => s.username === userData.username)) {
+        activeSessions.push(userData);
+        localStorage.setItem("fluffy_active_sessions", JSON.stringify(activeSessions));
+      }
+
+      if (redirectAfterLogin) {
+        setRedirectAfterLogin(false);
+        setPage("checkout");
+      } else {
+        setPage("home");
+      }
     } else if (matchedUser) {
-      const userData = { username: matchedUser.username, role: matchedUser.role };
+      const userData = { 
+        username: matchedUser.username, 
+        role: matchedUser.role,
+        fullName: matchedUser.fullName, 
+        email: matchedUser.email,
+        phone: matchedUser.phone
+      };
       localStorage.setItem("fluffy_user", JSON.stringify(userData));
       setUser(userData);
-      setPage("home");
+      
+      const activeSessions = JSON.parse(localStorage.getItem("fluffy_active_sessions")) || [];
+      if (!activeSessions.some(s => s.username === userData.username)) {
+        activeSessions.push(userData);
+        localStorage.setItem("fluffy_active_sessions", JSON.stringify(activeSessions));
+      }
+
+      if (redirectAfterLogin) {
+        setRedirectAfterLogin(false);
+        setPage("checkout");
+      } else {
+        setPage("home");
+      }
     } else {
       alert("Invalid username or password");
     }
@@ -45,26 +84,15 @@ function Login({ setUser, setPage }) {
 
             <div className="mb-3">
               <label className="form-label">Password</label>
-              <input
-                name="password"
-                type="password"
-                className="form-control"
-                required
-              />
+              <input name="password" type="password" className="form-control" required />
             </div>
 
-            <button className="btn btn-success w-100">
-              Login
-            </button>
+            <button className="btn btn-success w-100">Login</button>
           </form>
 
           <div className="text-center mt-3">
             <span>Don't have an account? </span>
-            <button 
-              className="btn btn-link p-0" 
-              onClick={() => setPage("register")}
-              style={{ verticalAlign: "baseline" }}
-            >
+            <button className="btn btn-link p-0" onClick={() => setPage("register")} style={{ verticalAlign: "baseline" }}>
               Register here
             </button>
           </div>

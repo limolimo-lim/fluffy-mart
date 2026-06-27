@@ -1,4 +1,13 @@
-function Checkout({ cart, setCart, setPage }) {
+import { useEffect } from "react";
+
+function Checkout({ cart, setCart, setPage, user }) {
+  useEffect(() => {
+    if (!user) {
+      alert("Please log in to view the checkout page.");
+      setPage("login");
+    }
+  }, [user, setPage]);
+
   const total = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -11,7 +20,7 @@ function Checkout({ cart, setCart, setPage }) {
 
     const newOrder = {
       id: Date.now(),
-      customerName: form.customerName.value,
+      customerName: user?.fullName || user?.username || form.customerName.value,
       phone: form.phone.value,
       address: form.address.value,
       paymentMethod: form.paymentMethod.value,
@@ -64,22 +73,37 @@ function Checkout({ cart, setCart, setPage }) {
               <label className="form-label">Customer Name</label>
               <input
                 name="customerName"
-                className="form-control"
+                className="form-control bg-light"
+                value={user?.fullName || user?.username || ""}
+                readOnly
                 required
               />
             </div>
+
+            {user?.email && (
+              <div className="mb-3">
+                <label className="form-label">Email Address</label>
+                <input
+                  className="form-control bg-light"
+                  value={user.email}
+                  readOnly
+                  disabled
+                />
+              </div>
+            )}
 
             <div className="mb-3">
               <label className="form-label">Phone Number</label>
               <input
                 name="phone"
                 className="form-control"
+                defaultValue={user?.phone || ""}
                 required
               />
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Address</label>
+              <label className="form-label">Delivery Address (Current Location)</label>
               <textarea
                 name="address"
                 className="form-control"

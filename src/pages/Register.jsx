@@ -1,11 +1,13 @@
 import React from "react";
 
 function Register({ setPage }) {
-  const register = (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
 
     const username = e.target.username.value;
+    const fullName = e.target.fullName.value;
     const email = e.target.email.value;
+    const phone = e.target.phone.value;
     const password = e.target.password.value;
     const confirmPassword = e.target.confirmPassword.value;
 
@@ -14,23 +16,26 @@ function Register({ setPage }) {
       return;
     }
 
-    const existingUsers = JSON.parse(localStorage.getItem("fluffy_registered_users")) || [];
+    const registeredUsers = JSON.parse(localStorage.getItem("fluffy_registered_users")) || [];
 
-    const userExists = existingUsers.some(user => user.username === username) || 
-                       username === "admin" || 
-                       username === "customer";
-                       
-    if (userExists) {
-      alert("Username is already taken!");
+    if (registeredUsers.some((user) => user.username === username)) {
+      alert("Username already exists! Please choose another one.");
       return;
     }
 
-    const newUser = { username, email, password, role: "customer" };
-    existingUsers.push(newUser);
+    const newUser = {
+      username,
+      fullName,
+      email,
+      phone,
+      password,
+      role: "customer"
+    };
 
-    localStorage.setItem("fluffy_registered_users", JSON.stringify(existingUsers));
+    registeredUsers.push(newUser);
+    localStorage.setItem("fluffy_registered_users", JSON.stringify(registeredUsers));
 
-    alert("Registration successful!");
+    alert("Registration successful! Proceeding to login.");
     setPage("login");
   };
 
@@ -40,15 +45,25 @@ function Register({ setPage }) {
         <div className="card-body">
           <h3 className="text-center mb-4">Register</h3>
 
-          <form onSubmit={register}>
+          <form onSubmit={handleRegister}>
             <div className="mb-3">
               <label className="form-label">Username</label>
               <input name="username" className="form-control" required />
             </div>
 
             <div className="mb-3">
+              <label className="form-label">Full Name</label>
+              <input name="fullName" className="form-control" required />
+            </div>
+
+            <div className="mb-3">
               <label className="form-label">Email Address</label>
               <input name="email" type="email" className="form-control" required />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Phone Number</label>
+              <input name="phone" type="tel" className="form-control" required />
             </div>
 
             <div className="mb-3">
